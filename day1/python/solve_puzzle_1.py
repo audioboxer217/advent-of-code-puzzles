@@ -18,7 +18,7 @@ def add_numbers_from_file(file, number):
 
 def main():
     """Run add_numbers_from_file"""
-    file = open("puzzle_input.txt")
+    file = open("../puzzle_input.txt")
 
     first_num = file.read(1)
 

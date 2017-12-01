@@ -21,7 +21,7 @@ def add_numbers_by_criteria(num_list, key_match):
 def main():
     """Run add_numbers_by_criteria"""
 
-    file = open("puzzle_input.txt")
+    file = open("../puzzle_input.txt")
     num_list = list(file.read())
     key_match = int(len(num_list)/2)
 
