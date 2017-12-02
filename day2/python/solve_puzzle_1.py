@@ -13,12 +13,6 @@ def get_values(row):
             largest = curr_num
     return smallest, largest
 
-def get_difference(smallest, largest):
-    """Determines the difference between two values"""
-    difference = int(largest) - int(smallest)
-    return difference
-
-
 def main():
     """Calculates a Checksum from CSV"""
     with open("../puzzle_input.csv") as file:
