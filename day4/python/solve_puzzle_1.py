@@ -20,7 +20,7 @@ def main():
             if validate_passphrs(passphrs):
                 valid_count += 1
 
-        print("Valid Passwords: %s" % valid_count)
+        print("Valid Passphrases: %s" % valid_count)
 
 if __name__ == '__main__':
     main()
