@@ -1,6 +1,7 @@
 ''' Sort program tower '''
 
 import re
+import json
 
 def add_to_dict(item, dictionary):
     ''' Add one item to a dictionary '''
@@ -15,9 +16,9 @@ def add_to_dict(item, dictionary):
     if sub_apps:
         sub_regex = re.compile(r'( -> )(\w.*)')
         sub_apps = sub_regex.match(sub_apps).group(2).split(', ')
-        dictionary[app_name] = {'name': app_name, 'weight': app_weight, 'sub_apps': sub_apps}
+        dictionary[app_name] = {'name': app_name, 'weight': int(app_weight), 'sub_apps': sub_apps}
     else:
-        dictionary[app_name] = {'name': app_name, 'weight': app_weight}
+        dictionary[app_name] = {'name': app_name, 'weight': int(app_weight)}
 
     return dictionary
 
@@ -32,10 +33,15 @@ def order_dict(dictionary):
             for sub_app in sub_apps:
                 app['sub_apps'][index] = dictionary[sub_app]
                 app['sub_apps'][index]['parent'] = app_name
+                if 'total_weight' in app:
+                    app['total_weight'] += int(app['sub_apps'][index]['weight'])
+                else:
+                    app['total_weight'] = int(app['weight']) + int(app['sub_apps'][index]['weight'])
                 remove_list.append(dictionary[sub_app]['name'])
                 index += 1
             #del app["sub_apps"]
             dictionary[app_name] = app
+    # Figure out how to add 'total_weight' to parent branches
 
     for sub_app in remove_list:
         del dictionary[sub_app]
@@ -87,8 +93,9 @@ def main():
 
     app_dict = order_dict(app_dict)
 
-    weights = find_imbalance(app_dict)
-    print(weights)
+    # weights = find_imbalance(app_dict)
+    # print(weights)
+    print(json.dumps(app_dict, indent=4, sort_keys=True))
 
 if __name__ == '__main__':
     main()
