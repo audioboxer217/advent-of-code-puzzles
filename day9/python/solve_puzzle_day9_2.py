@@ -35,7 +35,7 @@ def main():
             continue
 
     print("Total Score: %s" % sum(total_score))
-    print ("Garbage: %s" % garbage_count)
+    print("Garbage: %s" % garbage_count)
 
 if __name__ == '__main__':
     main()
