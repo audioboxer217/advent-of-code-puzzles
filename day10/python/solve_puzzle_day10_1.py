@@ -20,8 +20,6 @@ def main():
     file = open("../puzzle_input.txt")
     hash_lengths = map(int, file.read().split(","))
     input_size = len(input_list)
-    ''' input_list = list(range(0, 5))
-    hash_lengths = [3, 4, 1, 5] '''
 
     index = 0
     skip_size = 0
