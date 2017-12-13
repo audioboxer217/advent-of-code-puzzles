@@ -1,7 +1,6 @@
 ''' Sort program tower '''
 
 import re
-import json
 
 def add_to_dict(item, dictionary):
     ''' Add one item to a dictionary '''
@@ -13,89 +12,85 @@ def add_to_dict(item, dictionary):
     app_weight = matches.group(3)
     sub_apps = matches.group(4)
 
+    if app_name not in dictionary:
+        dictionary[app_name] = {'parent': '',
+                                'weight': 0,
+                                'sub_apps': []}
+    dictionary[app_name]["weight"] = app_weight
+
     if sub_apps:
         sub_regex = re.compile(r'( -> )(\w.*)')
         sub_apps = sub_regex.match(sub_apps).group(2).split(', ')
-        dictionary[app_name] = {'name': app_name, 'weight': int(app_weight), 'sub_apps': sub_apps}
-    else:
-        dictionary[app_name] = {'name': app_name, 'weight': int(app_weight)}
+        for sub_app in sub_apps:
+            if sub_app not in dictionary:
+                dictionary[sub_app] = {'parent': '',
+                                       'weight': 0,
+                                       'sub_apps': []}
+            dictionary[sub_app]['parent'] = app_name
+            dictionary[app_name]["sub_apps"].append(sub_app)
 
     return dictionary
 
-def order_dict(dictionary):
-    ''' Order the dictionary '''
-    remove_list = []
-    for app_name in iter(dictionary):
-        if 'sub_apps' in dictionary[app_name]:
-            app = dictionary.get(app_name)
-            sub_apps = app.get('sub_apps')
-            index = 0
-            for sub_app in sub_apps:
-                app['sub_apps'][index] = dictionary[sub_app]
-                app['sub_apps'][index]['parent'] = app_name
-                if 'total_weight' in app:
-                    app['total_weight'] += int(app['sub_apps'][index]['weight'])
-                else:
-                    app['total_weight'] = int(app['weight']) + int(app['sub_apps'][index]['weight'])
-                remove_list.append(dictionary[sub_app]['name'])
-                index += 1
-            #del app["sub_apps"]
-            dictionary[app_name] = app
-    # Figure out how to add 'total_weight' to parent branches
+def find_bottom(dictionary):
+    ''' Find the bottom of the app tree '''
 
-    for sub_app in remove_list:
-        del dictionary[sub_app]
+    bottom = ''
+    for key, value in dictionary.items():
+        if value["parent"] == "":
+            bottom = key
+            return bottom
 
-    return dictionary
+def calculate_tree_weight(dictionary, app_name):
+    ''' Calculates the total tree weight '''
+    weight = int(dictionary[app_name]["weight"])
+    for sub_app in  dictionary[app_name]["sub_apps"]:
+        weight += calculate_tree_weight(dictionary, sub_app)
+    return weight
 
-def find_imbalance(dictionary):
+def find_imbalance(dictionary, app_name):
     ''' Iterates through the dictionary to find the imbalance '''
 
-    weights = {}
-    stack = []
-    app_details = dictionary.items()
-    while app_details:
-        for key, val in app_details:
-            if isinstance(val, dict):
-                if val.get('parent'):
-                    parent = val.get('parent')
-                else:
-                    parent = "Bottom"
-                stack.append(val.items())
-                continue
-            elif isinstance(val, list):
-                for sub_app in val:
-                    if isinstance(sub_app, dict):
-                        parent = sub_app.get('parent')
-                        stack.append(sub_app.items())
-                        continue
-            elif key == 'weight':
-                if parent in weights:
-                    weights[parent]['total'] += int(val)
-                    weights[parent]['weights'].append(val)
-                else:
-                    new_item = {'total': int(val), 'weights': [val]}
-                    weights[parent] = new_item
-                continue
+    unbalanced = []
+    sub_app_weights = []
+    for sub_app in dictionary[app_name]["sub_apps"]:
+        sub_app_weights.append(calculate_tree_weight(dictionary, sub_app))
+    occurrences = []
+    if len(sub_app_weights) > 0:
+        for sub_app_weight in sub_app_weights:
+            occurrences.append(sub_app_weights.count(sub_app_weight))
+        if min(occurrences) != max(occurrences):
+            unbalanced_app = dictionary[app_name]["sub_apps"][occurrences.index(min(occurrences))]
+            unbalanced = [unbalanced_app, sub_app_weights]
+            find_imbalance(dictionary, unbalanced_app)
 
-        if len(stack) > 0:
-            app_details = stack.pop()
-        else: break
-
-    return weights
+    return unbalanced
 
 def main():
     ''' Sort program tower '''
+
     app_dict = {}
     with open("../puzzle_input.txt") as file:
         for line in file:
             app_dict = add_to_dict(line, app_dict)
 
-    app_dict = order_dict(app_dict)
+    bottom = find_bottom(app_dict)
 
-    # weights = find_imbalance(app_dict)
-    # print(weights)
-    print(json.dumps(app_dict, indent=4, sort_keys=True))
+    unbalanced = []
+    while len(unbalanced) == 0:
+        unbalanced = find_imbalance(app_dict, bottom)
+
+    print(unbalanced)
+
+    unbalanced_app_weight = int(app_dict[unbalanced[0]]["weight"])
+    unbalanced_weights = list(map(int, unbalanced[1]))
+    top_weight = max(unbalanced_weights)
+    bottom_weight = min(unbalanced_weights)
+    print(unbalanced_app_weight)
+    print(top_weight)
+    print(bottom_weight)
+    answer = unbalanced_app_weight - (top_weight - bottom_weight)
+
+    print(answer)
 
 if __name__ == '__main__':
     main()
