@@ -1,4 +1,4 @@
-''' Packet Scanners - Part 1 '''
+''' Packet Scanners - Part 2 '''
 
 SCANNERS = {}
 FIREWALL_SIZE = 0
