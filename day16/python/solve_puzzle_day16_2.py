@@ -65,20 +65,6 @@ def main():
     for _ in range((1000000000) % dance_loop_size):
         programs = dance(programs, dance_instructions)
         print(''.join(programs))
-        
-
-    ''' orig_programs = list(map(chr, range(ord('a'), ord('e')+1)))
-
-    programs_final = [None] * len(programs)
-    for char in orig_programs:
-        orig_pos = orig_programs.index(char)
-        new_pos = programs.index(char)
-        movement = (new_pos + 1) - (orig_pos + 1)
-        if movement < 0:
-            movement = len(programs) - ((orig_pos + 1) - (new_pos + 1))
-        final_pos = (orig_pos + (movement * 2)) % len(programs)
-        programs_final[final_pos] = char
-        print('%s: %s -> %s = %s' % (char, orig_pos, new_pos, movement)) '''
 
     print(''.join(programs))
 
