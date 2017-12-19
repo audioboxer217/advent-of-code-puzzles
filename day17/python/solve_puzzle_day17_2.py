@@ -3,21 +3,17 @@
 def main():
     ''' Spinlock  '''
 
-    spinlock = [0]
     steps = 337
     position = 0
+    length = 1
 
-    insertion = 1
-    while insertion <= 50000000:
-        spinlock_size = len(spinlock)
-        insertion_point = ((position + steps) % spinlock_size) + 1
-        spinlock.insert(insertion_point, insertion)
-        print(insertion)
-        insertion += 1
-        position = insertion_point
+    for i in range(1, int(50e6) + 1):
+        position = ((position + steps) % length) + 1
+        if position == 1:
+            answer = i
+        length += 1
 
-    answer = spinlock.index(0) + 1
-    print(spinlock[answer])
+    print(answer)
 
 if __name__ == '__main__':
     main()
