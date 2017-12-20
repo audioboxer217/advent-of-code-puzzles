@@ -20,7 +20,6 @@ def get_instruction_detail(instruction_arr):
 def play_sound(note):
     ''' plays a sound with a frequency equal to the value of 'note'. '''
 
-    print("Play %s" % REGISTER[note])
     return REGISTER[note]
 
 def set_register(note, value):
@@ -68,7 +67,6 @@ def jump_instructions(note):
         of -1 jumps to the previous instruction, and so on.) '''
 
     if REGISTER[note] > 0:
-        print("Jump %s" % note)
         return True
 
 def main():
@@ -83,7 +81,6 @@ def main():
     while i < inst_length:
         instruction_arr = instructions[i].split(' ')
         instruction, note, value = get_instruction_detail(instruction_arr)
-        print(instruction + ' ' + note + ' ' + str(value))
 
         if note not in REGISTER:
             REGISTER[note] = 0
