@@ -81,14 +81,21 @@ def main():
         rule = rule.split(' => ')
         rules.append(rule)
 
-    for _ in range(5):
+    for i in range(18):
         art = process_grid(art, rules)
+
+        if i == 4:
+            count = 0
+            for row in art:
+                count += row.count("#")
+            print('After 5 iterations: %s' % count)
 
     count = 0
     for row in art:
         count += row.count("#")
 
     print(count)
+    print('After 18 iterations: %s' % count)
 
 if __name__ == '__main__':
     main()
